@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Manipur State Museum</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo"><h1>Manipur State Museum</h1></div>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span><span></span><span></span>
+                </button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/collections">Collections</a></li>
+                    <li><a href="/exhibitions">Exhibitions</a></li>
+                    <li><a href="/visitor-info">Visit</a></li>
+                    <li><a href="/events">Events</a></li>
+                    <li><a href="/news">News</a></li>
+                    <li><a href="/contact" class="active">Contact</a></li>
+                    <li><a href="/admin" class="btn-admin">Admin</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section style="padding: 4rem 0;">
+        <div class="container">
+            <h1 class="section-title">Contact Us</h1>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+                <div class="card">
+                    <h2>Get In Touch</h2>
+                    <div style="margin-top: 1.5rem;">
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">📍 Address</h4>
+                            <p style="color: var(--text-light);">Manipur State Museum<br>Polo Ground, Imphal West<br>Manipur - 795001</p>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">📞 Phone</h4>
+                            <p style="color: var(--text-light);">+91-385-2222XXX</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">✉️ Email</h4>
+                            <p style="color: var(--text-light);">info@manipurmuseum.gov.in</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Send Us a Message</h2>
+                    <form id="contactForm" style="margin-top: 1.5rem;">
+                        <div class="form-group">
+                            <input type="text" name="name" class="form-control" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" class="form-control" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="subject" class="form-control" placeholder="Subject">
+                        </div>
+                        <div class="form-group">
+                            <textarea name="message" class="form-control" rows="5" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h2>Opening Hours</h2>
+                <div style="margin-top: 1rem; color: var(--text-light);">
+                    <p><strong>Tuesday - Sunday:</strong> 10:00 AM - 4:30 PM</p>
+                    <p><strong>Monday:</strong> Closed</p>
+                    <p><strong>Public Holidays:</strong> Closed</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Manipur State Museum</h3>
+                    <p>Preserving and showcasing the rich cultural heritage of Manipur since 1969.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/collections">Collections</a></li>
+                        <li><a href="/exhibitions">Exhibitions</a></li>
+                        <li><a href="/events">Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Visit Us</h4>
+                    <ul>
+                        <li>Polo Ground, Imphal West</li>
+                        <li>Manipur - 795001</li>
+                        <li>Phone: +91-385-2222XXX</li>
+                        <li>Email: info@manipurmuseum.gov.in</li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Opening Hours</h4>
+                    <ul>
+                        <li>Tuesday - Sunday</li>
+                        <li>10:00 AM - 4:30 PM</li>
+                        <li>Monday: Closed</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Manipur State Museum. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="/js/main.js"></script>
+</body>
+</html>

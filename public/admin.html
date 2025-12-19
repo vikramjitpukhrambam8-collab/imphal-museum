@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Manipur State Museum</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #d97706 0%, #ea580c 100%);">
+        <div class="card" style="max-width: 450px; width: 100%; margin: 20px;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Admin Panel</h1>
+                <p style="color: var(--text-light);">Manipur State Museum</p>
+            </div>
+            
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" class="form-control" placeholder="admin@museum.gov.in" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            
+            <div style="margin-top: 1.5rem; padding: 1rem; background: #fff7ed; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                <p style="font-size: 0.875rem; margin: 0;"><strong>Demo Credentials:</strong></p>
+                <p style="font-size: 0.875rem; margin: 0.5rem 0 0 0;">Email: admin@museum.gov.in<br>Password: Admin@123</p>
+            </div>
+        </div>
+    </div>
+
+                <!-- Add Exhibition Form -->
+                <div id="addExhibitionForm" class="admin-page" style="display: none;">
+                    <div class="admin-header">
+                        <h1>Add New Exhibition</h1>
+                        <button class="btn btn-secondary" onclick="showAdminPage('exhibitions')">← Back</button>
+                    </div>
+
+                    <div class="card">
+                        <form id="exhibitionForm">
+                            <div class="form-group">
+                                <label>Title *</label>
+                                <input type="text" name="title" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Description *</label>
+                                <textarea name="description" class="form-control" rows="4" required></textarea>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                <div class="form-group">
+                                    <label>Type *</label>
+                                    <select name="type" class="form-control" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Permanent">Permanent</option>
+                                        <option value="Temporary">Temporary</option>
+                                        <option value="Special">Special</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Start Date *</label>
+                                    <input type="date" name="startDate" class="form-control" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    <input type="date" name="endDate" class="form-control">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Location</label>
+                                    <input type="text" name="location" class="form-control" placeholder="e.g., Gallery A">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Image (upload)</label>
+                                <input type="file" name="image" accept="image/*" class="form-control">
+                                <img id="exhibitionImagePreview" alt="Image preview" style="display:none; max-width:240px; margin-top:0.5rem; border-radius:8px; object-fit:cover;" />
+                                <small style="color:var(--text-light);">You can also provide an image URL in the field below.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Image URL (optional)</label>
+                                <input type="url" name="imageUrl" class="form-control" placeholder="https://example.com/image.jpg">
+                                <small id="imageUrlMessage" style="color:#ef4444; display:none;"></small>
+                            </div>
+
+                            <div style="display: flex; gap: 1rem;">
+                                <button type="submit" class="btn btn-success">Save Exhibition</button>
+                                <button type="button" class="btn btn-secondary" onclick="showAdminPage('exhibitions')">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Add Event Form -->
+                <div id="addEventForm" class="admin-page" style="display: none;">
+                    <div class="admin-header">
+                        <h1>Add New Event</h1>
+                        <button class="btn btn-secondary" onclick="showAdminPage('events')">← Back</button>
+                    </div>
+
+                    <div class="card">
+                        <form id="eventForm">
+                            <div class="form-group">
+                                <label>Title *</label>
+                                <input type="text" name="title" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Description *</label>
+                                <textarea name="description" class="form-control" rows="4" required></textarea>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                <div class="form-group">
+                                    <label>Date *</label>
+                                    <input type="date" name="date" class="form-control" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Time</label>
+                                    <input type="time" name="time" class="form-control">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Location *</label>
+                                    <input type="text" name="location" class="form-control" placeholder="e.g., Main Hall" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Category</label>
+                                    <input type="text" name="category" class="form-control" placeholder="e.g., Workshop, Talk">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Image (upload)</label>
+                                <input type="file" name="image" accept="image/*" class="form-control">
+                                <img id="eventImagePreview" alt="Image preview" style="display:none; max-width:240px; margin-top:0.5rem; border-radius:8px; object-fit:cover;" />
+                                <small style="color:var(--text-light);">You can also provide an image URL in the field below.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Image URL (optional)</label>
+                                <input type="url" name="imageUrl" class="form-control" placeholder="https://example.com/image.jpg">
+                                <small id="eventImageUrlMessage" style="color:#ef4444; display:none;"></small>
+                            </div>
+
+                            <div style="display: flex; gap: 1rem;">
+                                <button type="submit" class="btn btn-success">Save Event</button>
+                                <button type="button" class="btn btn-secondary" onclick="showAdminPage('events')">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" style="display: none;">
+        <div class="admin-container">
+            <!-- Sidebar -->
+            <aside class="admin-sidebar">
+                <h2>Admin Panel</h2>
+                <ul class="admin-menu">
+                    <li><a href="#dashboard" class="admin-nav-link active" data-page="dashboard">📊 Dashboard</a></li>
+                    <li><a href="#collections" class="admin-nav-link" data-page="collections">🖼️ Collections</a></li>
+                    <li><a href="#exhibitions" class="admin-nav-link" data-page="exhibitions">🏛️ Exhibitions</a></li>
+                    <li><a href="#events" class="admin-nav-link" data-page="events">📅 Events</a></li>
+                    <li><a href="#news" class="admin-nav-link" data-page="news">📰 News</a></li>
+                    <li><a href="#contacts" class="admin-nav-link" data-page="contacts">✉️ Contacts</a></li>
+                    <li><a href="#users" class="admin-nav-link" data-page="users">👥 Users</a></li>
+                    <li><a href="#" onclick="handleAdminLogout()" style="color: #ef4444;">🚪 Logout</a></li>
+                </ul>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="admin-content">
+                <!-- Dashboard Page -->
+                <div id="dashboardPage" class="admin-page">
+                    <div class="admin-header">
+                        <h1>Dashboard</h1>
+                        <div>
+                            <span id="adminUserName" style="margin-right: 1rem; font-weight: 500;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Total Collections</h3>
+                            <div class="stat-number" id="statCollections">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Active Exhibitions</h3>
+                            <div class="stat-number" id="statExhibitions">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Upcoming Events</h3>
+                            <div class="stat-number" id="statEvents">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>News Articles</h3>
+                            <div class="stat-number" id="statNews">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="card" style="margin-top: 2rem;">
+                        <h2 style="margin-bottom: 1.5rem;">Quick Actions</h2>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <button class="btn btn-primary" onclick="showAddCollectionForm()">➕ Add Collection</button>
+                            <button class="btn btn-primary" onclick="showAddExhibitionForm()">➕ Add Exhibition</button>
+                            <button class="btn btn-primary" onclick="showAddEventForm()">➕ Add Event</button>
+                            <button class="btn btn-primary" onclick="showAddNewsForm()">➕ Add News</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Collections Page -->
+                <div id="collectionsPage" class="admin-page" style="display: none;">
+                    <div class="admin-header">
+                        <h1>Manage Collections</h1>
+                        <button class="btn btn-primary" onclick="showAddCollectionForm()">➕ Add Collection</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Period</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminCollectionsTable">
+                                <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Add Collection Form -->
+                <div id="addCollectionForm" class="admin-page" style="display: none;">
+                    <div class="admin-header">
+                        <h1>Add New Collection</h1>
+                        <button class="btn btn-secondary" onclick="showAdminPage('collections')">← Back</button>
+                    </div>
+
+                    <div class="card">
+                        <form id="collectionForm">
+                            <div class="form-group">
+                                <label>Title *</label>
+                                <input type="text" name="title" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Description *</label>
+                                <textarea name="description" class="form-control" rows="4" required></textarea>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                <div class="form-group">
+                                    <label>Category *</label>
+                                    <select name="category" class="form-control" required>
+                                        <option value="">Select Category</option>
+                                        <option value="Archaeology">Archaeology</option>
+                                        <option value="Ethnography">Ethnography</option>
+                                        <option value="Art">Art</option>
+                                        <option value="Natural History">Natural History</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Period *</label>
+                                    <input type="text" name="period" class="form-control" placeholder="e.g., 15th Century" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Origin *</label>
+                                    <input type="text" name="origin" class="form-control" placeholder="e.g., Imphal" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Material</label>
+                                    <input type="text" name="material" class="form-control" placeholder="e.g., Bronze, Silk">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Image URL</label>
+                                <input type="url" name="image" class="form-control" placeholder="https://example.com/image.jpg">
+                            </div>
+
+                            <div style="display: flex; gap: 1rem;">
+                                <button type="submit" class="btn btn-success">Save Collection</button>
+                                <button type="button" class="btn btn-secondary" onclick="showAdminPage('collections')">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Other pages placeholders -->
+                <div id="exhibitionsPage" class="admin-page" style="display: none;">
+                    <div class="admin-header">
+                        <h1>Manage Exhibitions</h1>
+                        <button class="btn btn-primary">➕ Add Exhibition</button>
+                    </div>
+                    <div class="card">
+                        <p>Exhibition management interface will be displayed here.</p>
+                    </div>
+                </div>
+
+                <div id="eventsPage" class="admin-page" style="display: none;">
+                    <div class="admin-header">
+                        <h1>Manage Events</h1>
+                        <button class="btn btn-primary">➕ Add Event</button>
+                    </div>
+                    <div class="card">
+                        <p>Event management interface will be displayed here.</p>
+                    </div>
+                </div>
+
+                <div id="newsPage" class="admin-page" style="display: none;">
+                    <div class="admin-header">
+                        <h1>Manage News</h1>
+                        <button class="btn btn-primary">➕ Add News</button>
+                    </div>
+                    <div class="card">
+                        <p>News management interface will be displayed here.</p>
+                    </div>
+                </div>
+
+                <div id="contactsPage" class="admin-page" style="display: none;">
+                    <div class="admin-header">
+                        <h1>Contact Messages</h1>
+                    </div>
+                    <div class="card">
+                        <p>Contact messages will be displayed here.</p>
+                    </div>
+                </div>
+
+                <div id="usersPage" class="admin-page" style="display: none;">
+                    <div class="admin-header">
+                        <h1>User Management</h1>
+                        <button class="btn btn-primary">➕ Add User</button>
+                    </div>
+                    <div class="card">
+                        <p>User management interface will be displayed here.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        // Check authentication on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (isLoggedIn()) {
+                showAdminDashboard();
+            }
+        });
+
+        // Show admin dashboard
+        function showAdminDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            
+            const user = getUser();
+            if (user) {
+                document.getElementById('adminUserName').textContent = user.name;
+            }
+            
+            loadAdminStats();
+            
+            // Handle navigation from URL hash
+            const hash = window.location.hash.substring(1) || 'dashboard';
+            showAdminPage(hash);
+        }
+
+        // Show specific admin page
+        function showAdminPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.admin-page').forEach(page => {
+                page.style.display = 'none';
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.admin-nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected page
+            const pageElement = document.getElementById(pageName + 'Page');
+            if (pageElement) {
+                pageElement.style.display = 'block';
+            }
+            
+            // Add active class to current nav link
+            const activeLink = document.querySelector(`[data-page="${pageName}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+            
+            // Load page-specific data
+            if (pageName === 'collections') {
+                loadAdminCollections();
+            } else if (pageName === 'dashboard') {
+                loadAdminStats();
+            } else if (pageName === 'exhibitions') {
+                loadAdminExhibitions();
+            } else if (pageName === 'events') {
+                loadAdminEvents();
+            }
+            
+            // Update URL hash
+            window.location.hash = pageName;
+        }
+
+        // Add event listeners to admin navigation
+        document.querySelectorAll('.admin-nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageName = link.dataset.page;
+                if (pageName) {
+                    showAdminPage(pageName);
+                }
+            });
+        });
+
+        // Show add collection form
+        function showAddCollectionForm() {
+            document.querySelectorAll('.admin-page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById('addCollectionForm').style.display = 'block';
+        }
+
+        // Handle collection form submission
+        document.getElementById('collectionForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await apiFetch('/api/admin/collections', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Collection created successfully!', 'success');
+                    e.target.reset();
+                    showAdminPage('collections');
+                } else {
+                    showNotification(result.message || 'Failed to create collection', 'error');
+                }
+            } catch (error) {
+                console.error('Error creating collection:', error);
+                showNotification('Error creating collection', 'error');
+            }
+        });
+
+        // Handle exhibition form submission (uses centralized helper)
+        // Helper to wait for image URL validation to finish (resolves to true if valid or empty)
+        // Accepts an input element (or null) so it can be reused for exhibition and event forms
+        function waitForImageUrlValidation(inputEl, timeout = 3000) {
+            return new Promise((resolve) => {
+                if (!inputEl) return resolve(true);
+                const url = inputEl.value.trim();
+                if (!url) return resolve(true);
+                // If already validated, return result immediately
+                if (inputEl.dataset.valid === 'true') return resolve(true);
+                if (inputEl.dataset.valid === 'false') return resolve(false);
+
+                // Otherwise wait for up to `timeout` ms for the validation to set dataset.valid
+                const start = Date.now();
+                const iv = setInterval(() => {
+                    if (inputEl.dataset.valid === 'true') {
+                        clearInterval(iv);
+                        return resolve(true);
+                    }
+                    if (inputEl.dataset.valid === 'false') {
+                        clearInterval(iv);
+                        return resolve(false);
+                    }
+                    if (Date.now() - start > timeout) {
+                        clearInterval(iv);
+                        return resolve(false);
+                    }
+                }, 100);
+            });
+        }
+
+        document.getElementById('exhibitionForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const fileInput = e.target.querySelector('input[type="file"][name="image"]');
+
+            try {
+                let result;
+
+                if (!isLoggedIn()) {
+                    showNotification('You must be logged in to perform this action', 'error');
+                    return;
+                }
+
+                if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                    // The file input is already part of the FormData created from the form
+                    const form = new FormData(e.target);
+                    for (const pair of form.entries()) console.log('exhibition form entry:', pair[0], pair[1]);
+                    result = await addExhibition(form);
+                } else {
+                    const obj = Object.fromEntries(new FormData(e.target).entries());
+                    console.log('exhibition JSON payload:', obj);
+                    if (obj.imageUrl) {
+                        // Wait for validation (small timeout) so users who just pasted URL get validated
+                        const ok = await waitForImageUrlValidation(_exUrlInput, 4000);
+                        if (!ok) {
+                            showNotification('Please provide a valid image URL or upload an image file', 'error');
+                            return;
+                        }
+                        obj.image = obj.imageUrl;
+                    }
+                    delete obj.imageUrl;
+                    result = await addExhibition(obj);
+                }
+
+                if (result && result.success) {
+                    showNotification('Exhibition created successfully!', 'success');
+                    e.target.reset();
+                    hideExhibitionPreview();
+                    showAdminPage('exhibitions');
+                } else {
+                    showNotification(result?.message || 'Failed to create exhibition', 'error');
+                }
+            } catch (error) {
+                const server = error?.response;
+                console.debug('Create exhibition error response:', server || error.message || error);
+                if (server?.errors && Array.isArray(server.errors)) {
+                    showNotification(server.errors[0], 'error');
+                } else if (server?.fields && Array.isArray(server.fields)) {
+                    showNotification('Missing fields: ' + server.fields.join(', '), 'error');
+                } else if (server?.message) {
+                    showNotification(server.message, 'error');
+                } else {
+                    showNotification(error.message || 'Error creating exhibition', 'error');
+                }
+            }
+        });
+
+        // Show add exhibition form
+        function showAddExhibitionForm() {
+            // Clear any previous preview/state before showing
+            hideExhibitionPreview();
+            document.querySelectorAll('.admin-page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById('addExhibitionForm').style.display = 'block';
+        }
+
+        // Image preview helpers for Add Exhibition form
+        function hideExhibitionPreview() {
+            const preview = document.getElementById('exhibitionImagePreview');
+            const fileInput = document.querySelector('#exhibitionForm input[type="file"][name="image"]');
+            const urlInput = document.querySelector('#exhibitionForm input[name="imageUrl"]');
+
+            if (preview) {
+                preview.src = '';
+                preview.style.display = 'none';
+            }
+            if (fileInput) fileInput.value = '';
+            if (urlInput) {
+                urlInput.value = '';
+                urlInput.dataset.valid = 'false';
+            }
+            const msg = document.getElementById('imageUrlMessage');
+            if (msg) {
+                msg.textContent = '';
+                msg.style.display = 'none';
+            }
+        }
+
+        function showExhibitionPreviewFromFile(file) {
+            const preview = document.getElementById('exhibitionImagePreview');
+            if (!preview || !file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                preview.src = ev.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Wire file input and image URL preview behavior
+        const _exFileInput = document.querySelector('#exhibitionForm input[type="file"][name="image"]');
+        const _exUrlInput = document.querySelector('#exhibitionForm input[name="imageUrl"]');
+        if (_exFileInput) {
+            _exFileInput.addEventListener('change', (ev) => {
+                const file = ev.target.files && ev.target.files[0];
+                if (file) {
+                    showExhibitionPreviewFromFile(file);
+                } else {
+                    // fallback to URL if present
+                    if (_exUrlInput && _exUrlInput.value) {
+                        const preview = document.getElementById('exhibitionImagePreview');
+                        preview.src = _exUrlInput.value;
+                        preview.style.display = 'block';
+                    } else {
+                        hideExhibitionPreview();
+                    }
+                }
+            });
+        }
+
+        if (_exUrlInput) {
+            const _imageUrlMsg = document.getElementById('imageUrlMessage');
+            let _urlCheckToken = 0;
+            _exUrlInput.addEventListener('input', (ev) => {
+                const url = ev.target.value.trim();
+                const preview = document.getElementById('exhibitionImagePreview');
+                const fileInput = document.querySelector('#exhibitionForm input[type="file"][name="image"]');
+                // Reset previous validity
+                _exUrlInput.dataset.valid = 'false';
+                _imageUrlMsg.style.display = 'none';
+
+                // Only show URL preview when no file is selected (file takes precedence)
+                if (url && fileInput && fileInput.files && fileInput.files.length === 0) {
+                    const token = ++_urlCheckToken;
+                    // Try loading as an image to validate
+                    const img = new Image();
+                    img.onload = () => {
+                        // ensure this is the latest check
+                        if (token !== _urlCheckToken) return;
+                        preview.src = url;
+                        preview.style.display = 'block';
+                        _exUrlInput.dataset.valid = 'true';
+                        _imageUrlMsg.style.display = 'none';
+                    };
+                    img.onerror = () => {
+                        if (token !== _urlCheckToken) return;
+                        preview.src = '';
+                        preview.style.display = 'none';
+                        _exUrlInput.dataset.valid = 'false';
+                        _imageUrlMsg.textContent = 'Image could not be loaded from the provided URL.';
+                        _imageUrlMsg.style.display = 'block';
+                    };
+                    img.src = url;
+                } else if (!url && (!fileInput || fileInput.files.length === 0)) {
+                    hideExhibitionPreview();
+                }
+            });
+        }
+
+        // Hide preview on explicit form reset
+        document.getElementById('exhibitionForm')?.addEventListener('reset', () => hideExhibitionPreview());
+
+        function showAddEventForm() {
+            // clear and show event form
+            hideEventPreview();
+            document.querySelectorAll('.admin-page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById('addEventForm').style.display = 'block';
+        }
+
+        // Event preview helpers
+        function hideEventPreview() {
+            const preview = document.getElementById('eventImagePreview');
+            const fileInput = document.querySelector('#eventForm input[type="file"][name="image"]');
+            const urlInput = document.querySelector('#eventForm input[name="imageUrl"]');
+            if (preview) { preview.src = ''; preview.style.display = 'none'; }
+            if (fileInput) fileInput.value = '';
+            if (urlInput) { urlInput.value = ''; urlInput.dataset.valid = 'false'; }
+            const msg = document.getElementById('eventImageUrlMessage'); if (msg) { msg.textContent = ''; msg.style.display = 'none'; }
+        }
+
+        function showEventPreviewFromFile(file) {
+            const preview = document.getElementById('eventImagePreview');
+            if (!preview || !file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => { preview.src = ev.target.result; preview.style.display = 'block'; };
+            reader.readAsDataURL(file);
+        }
+
+        // Wire event form preview behavior
+        const _evFileInput = document.querySelector('#eventForm input[type="file"][name="image"]');
+        const _evUrlInput = document.querySelector('#eventForm input[name="imageUrl"]');
+        if (_evFileInput) {
+            _evFileInput.addEventListener('change', (ev) => {
+                const file = ev.target.files && ev.target.files[0];
+                if (file) { showEventPreviewFromFile(file); } else {
+                    if (_evUrlInput && _evUrlInput.value) { const preview = document.getElementById('eventImagePreview'); preview.src = _evUrlInput.value; preview.style.display = 'block'; } else { hideEventPreview(); }
+                }
+            });
+        }
+        if (_evUrlInput) {
+            const _evMsg = document.getElementById('eventImageUrlMessage');
+            let _evToken = 0;
+            _evUrlInput.addEventListener('input', (ev) => {
+                const url = ev.target.value.trim();
+                const preview = document.getElementById('eventImagePreview');
+                const fileInput = document.querySelector('#eventForm input[type="file"][name="image"]');
+                _evUrlInput.dataset.valid = 'false'; _evMsg.style.display = 'none';
+                if (url && fileInput && fileInput.files && fileInput.files.length === 0) {
+                    const token = ++_evToken; const img = new Image();
+                    img.onload = () => { if (token !== _evToken) return; preview.src = url; preview.style.display = 'block'; _evUrlInput.dataset.valid = 'true'; _evMsg.style.display = 'none'; };
+                    img.onerror = () => { if (token !== _evToken) return; preview.src = ''; preview.style.display = 'none'; _evUrlInput.dataset.valid = 'false'; _evMsg.textContent = 'Image could not be loaded from the provided URL.'; _evMsg.style.display = 'block'; };
+                    img.src = url;
+                } else if (!url && (!fileInput || fileInput.files.length === 0)) { hideEventPreview(); }
+            });
+        }
+
+        // Handle event form submission
+        document.getElementById('eventForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!isLoggedIn()) {
+                showNotification('You must be logged in to perform this action', 'error');
+                return;
+            }
+
+            // Client-side validation for required fields
+            const title = e.target.title.value.trim();
+            const description = e.target.description.value.trim();
+            const dateVal = e.target.date.value;
+            const locationVal = e.target.location.value.trim();
+
+            if (!title) { showNotification('Title is required', 'error'); return; }
+            if (!description) { showNotification('Description is required', 'error'); return; }
+            if (!dateVal || isNaN(Date.parse(dateVal))) { showNotification('Please provide a valid date', 'error'); return; }
+            if (!locationVal) { showNotification('Location is required', 'error'); return; }
+
+            const fileInput = e.target.querySelector('input[type="file"][name="image"]');
+
+            try {
+                let result;
+                if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                    const form = new FormData(e.target);
+                    // Log form entries for debugging
+                    for (const pair of form.entries()) console.log('event form entry:', pair[0], pair[1]);
+                    result = await addEvent(form);
+                } else {
+                    const obj = Object.fromEntries(new FormData(e.target).entries());
+                    console.log('event JSON payload:', obj);
+                    if (obj.imageUrl) {
+                        const ok = await waitForImageUrlValidation(_evUrlInput, 4000);
+                        if (!ok) {
+                            showNotification('Please provide a valid image URL or upload an image file', 'error');
+                            return;
+                        }
+                        obj.image = obj.imageUrl;
+                    }
+                    delete obj.imageUrl;
+                    result = await addEvent(obj);
+                }
+
+                if (result && result.success) {
+                    showNotification('Event created successfully!', 'success');
+                    e.target.reset();
+                    hideEventPreview();
+                    showAdminPage('events');
+                } else {
+                    showNotification(result?.message || 'Failed to create event', 'error');
+                }
+            } catch (error) {
+                const server = error?.response;
+                console.debug('Create event error response:', server || error.message || error);
+                if (server?.errors && Array.isArray(server.errors)) {
+                    showNotification(server.errors[0], 'error');
+                } else if (server?.fields && Array.isArray(server.fields)) {
+                    showNotification('Missing fields: ' + server.fields.join(', '), 'error');
+                } else if (server?.message) {
+                    showNotification(server.message, 'error');
+                } else {
+                    showNotification(error.message || 'Error creating event', 'error');
+                }
+            }
+        });
+
+        function showAddNewsForm() {
+            showNotification('News form - Coming soon!', 'success');
+        }
+
+        function editCollection(id) {
+            showNotification('Edit functionality - Coming soon!', 'success');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipur State Museum - Home</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <h1>Manipur State Museum</h1>
+                </div>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="/" class="active">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/collections">Collections</a></li>
+                    <li><a href="/exhibitions">Exhibitions</a></li>
+                    <li><a href="/visitor-info">Visit</a></li>
+                    <li><a href="/events">Events</a></li>
+                    <li><a href="/news">News</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/admin" class="btn-admin">Admin</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Manipur State Museum</h1>
+            <p class="hero-subtitle">Preserving the Rich Cultural Heritage of Manipur</p>
+            <div class="hero-buttons">
+                <a href="/collections" class="btn btn-primary">Explore Collections</a>
+                <a href="/visitor-info" class="btn btn-secondary">Plan Your Visit</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Highlights Section -->
+    <section class="highlights">
+        <div class="container">
+            <div class="highlights-grid">
+                <div class="highlight-card">
+                    <div class="highlight-icon">📚</div>
+                    <h3>10,000+ Artifacts</h3>
+                    <p>Extensive collection spanning archaeology, ethnography, and art</p>
+                </div>
+                <div class="highlight-card">
+                    <div class="highlight-icon">🏛️</div>
+                    <h3>7 Galleries</h3>
+                    <p>Dedicated spaces for different cultural aspects</p>
+                </div>
+                <div class="highlight-card">
+                    <div class="highlight-icon">🎨</div>
+                    <h3>50+ Years</h3>
+                    <p>Serving as the cultural custodian since 1969</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Collections -->
+    <section class="featured-collections">
+        <div class="container">
+            <h2 class="section-title">Featured Collections</h2>
+            <div class="collections-grid" id="featuredCollections">
+                <!-- Collections will be loaded dynamically -->
+                <div class="loading">Loading collections...</div>
+            </div>
+            <div class="text-center mt-40">
+                <a href="/collections" class="btn btn-primary">View All Collections</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Announcements -->
+    <section class="announcements">
+        <div class="container">
+            <div class="announcement-box">
+                <h3>Latest Announcements</h3>
+                <ul class="announcement-list">
+                    <li>
+                        <span class="announcement-icon">📢</span>
+                        <span>Museum will remain closed on December 25, 2024 for maintenance</span>
+                    </li>
+                    <li>
+                        <span class="announcement-icon">📢</span>
+                        <span>New photography exhibition opening January 2025</span>
+                    </li>
+                    <li>
+                        <span class="announcement-icon">📢</span>
+                        <span>Free entry for students every first Saturday of the month</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upcoming Events -->
+    <section class="upcoming-events">
+        <div class="container">
+            <h2 class="section-title">Upcoming Events</h2>
+            <div class="events-grid" id="upcomingEvents">
+                <!-- Events will be loaded dynamically -->
+                <div class="loading">Loading events...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Manipur State Museum</h3>
+                    <p>Preserving and showcasing the rich cultural heritage of Manipur since 1969.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/collections">Collections</a></li>
+                        <li><a href="/exhibitions">Exhibitions</a></li>
+                        <li><a href="/events">Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Visit Us</h4>
+                    <ul>
+                        <li>Polo Ground, Imphal West</li>
+                        <li>Manipur - 795001</li>
+                        <li>Phone: +91-385-2222XXX</li>
+                        <li>Email: info@manipurmuseum.gov.in</li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Opening Hours</h4>
+                    <ul>
+                        <li>Tuesday - Sunday</li>
+                        <li>10:00 AM - 4:30 PM</li>
+                        <li>Monday: Closed</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Manipur State Museum. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script>
+        // Load featured collections
+        async function loadFeaturedCollections() {
+            try {
+                const response = await fetch('/api/collections?limit=4');
+                const data = await response.json();
+                
+                const container = document.getElementById('featuredCollections');
+                
+                if (data.success && data.data.length > 0) {
+                    container.innerHTML = data.data.map(collection => `
+                        <div class="collection-card">
+                            <div class="collection-image" style="background-image: url('${collection.image || '/images/placeholder.jpg'}')"></div>
+                            <div class="collection-content">
+                                <span class="collection-category">${collection.category}</span>
+                                <h3>${collection.title}</h3>
+                                <p class="collection-period">${collection.period}</p>
+                                <p>${collection.description.substring(0, 100)}...</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p class="no-data">No collections available</p>';
+                }
+            } catch (error) {
+                console.error('Error loading collections:', error);
+                document.getElementById('featuredCollections').innerHTML = '<p class="error">Error loading collections</p>';
+            }
+        }
+
+        // Load upcoming events
+        async function loadUpcomingEvents() {
+            try {
+                const response = await fetch('/api/events');
+                const data = await response.json();
+                
+                const container = document.getElementById('upcomingEvents');
+                
+                if (data.success && data.data.length > 0) {
+                    const upcomingEvents = data.data
+                        .filter(event => new Date(event.date) >= new Date())
+                        .slice(0, 3);
+                    
+                    if (upcomingEvents.length > 0) {
+                        container.innerHTML = upcomingEvents.map(event => `
+                            <div class="event-card">
+                                <div class="event-date">
+                                    <span class="event-day">${new Date(event.date).getDate()}</span>
+                                    <span class="event-month">${new Date(event.date).toLocaleString('default', { month: 'short' })}</span>
+                                </div>
+                                <div class="event-content">
+                                    <h3>${event.title}</h3>
+                                    <p class="event-time">⏰ ${event.time}</p>
+                                    <p class="event-location">📍 ${event.location}</p>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        container.innerHTML = '<p class="no-data">No upcoming events</p>';
+                    }
+                } else {
+                    container.innerHTML = '<p class="no-data">No events available</p>';
+                }
+            } catch (error) {
+                console.error('Error loading events:', error);
+                document.getElementById('upcomingEvents').innerHTML = '<p class="error">Error loading events</p>';
+            }
+        }
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFeaturedCollections();
+            loadUpcomingEvents();
+        });
+    </script>
+</body>
+</html>
