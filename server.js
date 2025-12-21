@@ -14,6 +14,18 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
+
+app.get('/', (req, res) => {
+  res.send('Render app is running');
+});
+
+const PORT = process.env.PORT || 10000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -765,4 +777,5 @@ app.use((err, req, res, next) => {
 
 // The server is started after a successful MongoDB connection in
 // `connectToMongo()` above. Export the `app` for testing.
+
 module.exports = app;
