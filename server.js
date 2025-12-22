@@ -14,6 +14,18 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
+
+app.get('/', (req, res) => {
+  res.send('Render app is running');
+});
+
+const PORT = process.env.PORT || 10000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -262,11 +274,6 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
-// New simple page route
-app.get('/newpage', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'newpage.html'));
-});
-
 // API: Get Collections
 app.get('/api/collections', async (req, res) => {
   try {
@@ -439,22 +446,13 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
 // ==================== ADMIN ROUTES ====================
 
 // Create Collection
-app.post('/api/admin/collections', authenticateToken, authorizeRoles('admin', 'editor'), handleMulterUpload(upload.single('image')), async (req, res) => {
+app.post('/api/admin/collections', authenticateToken, authorizeRoles('admin', 'editor'), upload.single('image'), async (req, res) => {
   try {
-    // Use uploaded file path if present; otherwise keep any image URL provided
     const collectionData = {
       ...req.body,
-      image: req.file ? `/uploads/${req.file.filename}` : (req.body.image || null)
+      image: req.file ? `/uploads/${req.file.filename}` : null
     };
-
-    // Debug log to help diagnose 500 errors related to payloads/uploads
-    console.log('Creating collection with payload:', {
-      contentType: req.headers['content-type'],
-      body: req.body,
-      file: req.file ? { filename: req.file.filename, size: req.file.size } : null,
-      user: req.user?.email
-    });
-
+    
     const collection = await Collection.create(collectionData);
     res.status(201).json({ 
       success: true, 
@@ -462,13 +460,6 @@ app.post('/api/admin/collections', authenticateToken, authorizeRoles('admin', 'e
       data: collection 
     });
   } catch (error) {
-    // Return validation errors with 400 for better client feedback
-    if (error.name === 'ValidationError') {
-      const messages = Object.values(error.errors).map(e => e.message);
-      console.error('Collection creation validation failed:', messages, 'payload:', req.body);
-      return res.status(400).json({ success: false, message: 'Validation failed', errors: messages });
-    }
-    console.error('Error creating collection:', error, 'payload:', req.body);
     res.status(500).json({ success: false, message: error.message });
   }
 });
@@ -786,42 +777,6 @@ app.use((err, req, res, next) => {
 
 // The server is started after a successful MongoDB connection in
 // `connectToMongo()` above. Export the `app` for testing.
+
 module.exports = app;
-router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password required' });
-    }
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
-
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    );
-
-    res.json({
-      message: 'Login successful',
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email
-      }
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
