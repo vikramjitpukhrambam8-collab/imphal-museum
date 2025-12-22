@@ -2,6 +2,9 @@
 // Manipur State Museum - Main JavaScript
 // ==========================================
 
+// Global variable to store current editing collection ID
+let currentEditingCollectionId = null;
+
 // Mobile Menu Toggle
 document.addEventListener('DOMContentLoaded', () => {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
@@ -22,6 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Set active nav link based on current page
     setActiveNavLink();
+    
+    // Setup edit collection form handler
+    setupEditCollectionForm();
 });
 
 // Set active navigation link
@@ -89,6 +95,11 @@ async function apiFetch(url, options = {}) {
         opts.headers = { ...(opts.headers || {}), 'Content-Type': 'application/json' };
     }
 
+    // If caller passed a JSON string body (already stringified), ensure header is set
+    if (opts.body && !(opts.body instanceof FormData) && typeof opts.body === 'string') {
+        opts.headers = { ...(opts.headers || {}), 'Content-Type': opts.headers && opts.headers['Content-Type'] ? opts.headers['Content-Type'] : 'application/json' };
+    }
+
     // Default headers. Do not set Content-Type if body is FormData —
     // the browser will add correct multipart boundary.
     const headers = new Headers(opts.headers || {});
@@ -153,6 +164,50 @@ function formatDate(dateString) {
 function formatTime(dateString) {
     const options = { hour: '2-digit', minute: '2-digit' };
     return new Date(dateString).toLocaleTimeString('en-US', options);
+}
+
+// ==========================================
+// Collections API Functions
+// ==========================================
+
+// Fetch collection by ID
+async function getCollectionById(id) {
+    try {
+        const response = await apiFetch(`/api/collections/${id}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            return data.data;
+        } else {
+            throw new Error(data.message || 'Failed to fetch collection');
+        }
+    } catch (error) {
+        console.error('Error fetching collection:', error);
+        throw error;
+    }
+}
+
+// Update collection
+async function updateCollection(id, payload) {
+    const options = { method: 'PUT' };
+
+    if (payload instanceof FormData) {
+        options.body = payload;
+    } else if (payload && typeof payload === 'object') {
+        options.body = JSON.stringify(payload);
+    } else {
+        throw new Error('Invalid payload for updateCollection');
+    }
+
+    const response = await apiFetch(`/api/admin/collections/${id}`, options);
+    const data = await response.json();
+    
+    if (!response.ok) {
+        const err = new Error(data?.message || 'Failed to update collection');
+        err.response = data;
+        throw err;
+    }
+    return data;
 }
 
 // ==========================================
@@ -224,6 +279,99 @@ function setupCollectionFilters() {
             }, 500);
         });
     }
+}
+
+// ==========================================
+// Edit Collection Functions
+// ==========================================
+
+// Show edit collection form
+async function editCollection(id) {
+    try {
+        // Fetch the collection data
+        const collection = await getCollectionById(id);
+        
+        if (!collection) {
+            showNotification('Collection not found', 'error');
+            return;
+        }
+
+        // Store the ID for later use
+        currentEditingCollectionId = id;
+
+        // Hide all pages
+        document.querySelectorAll('.admin-page').forEach(page => {
+            page.style.display = 'none';
+        });
+
+        // Populate the form with collection data
+        const form = document.getElementById('editCollectionFormElement');
+        if (form) {
+            form.title.value = collection.title || '';
+            form.description.value = collection.description || '';
+            form.category.value = collection.category || '';
+            form.period.value = collection.period || '';
+            form.origin.value = collection.origin || '';
+            form.material.value = collection.material || '';
+            form.image.value = collection.image || '';
+        }
+
+        // Show the edit form
+        document.getElementById('editCollectionForm').style.display = 'block';
+
+    } catch (error) {
+        console.error('Error loading collection for edit:', error);
+        showNotification('Error loading collection data', 'error');
+    }
+}
+
+// Setup edit collection form handler
+function setupEditCollectionForm() {
+    const editForm = document.getElementById('editCollectionFormElement');
+    if (editForm) {
+        editForm.addEventListener('submit', handleEditCollectionSubmit);
+    }
+}
+
+// Handle edit collection form submission
+async function handleEditCollectionSubmit(event) {
+    event.preventDefault();
+    
+    if (!currentEditingCollectionId) {
+        showNotification('No collection selected for editing', 'error');
+        return;
+    }
+
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+    
+    try {
+        const response = await updateCollection(currentEditingCollectionId, data);
+        
+        if (response.success) {
+            showNotification('Collection updated successfully!', 'success');
+            event.target.reset();
+            currentEditingCollectionId = null;
+            showAdminPage('collections');
+        } else {
+            showNotification(response.message || 'Failed to update collection', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating collection:', error);
+        const server = error?.response;
+        if (server?.message) {
+            showNotification(server.message, 'error');
+        } else {
+            showNotification('Error updating collection', 'error');
+        }
+    }
+}
+
+// Cancel edit collection
+function cancelEditCollection() {
+    currentEditingCollectionId = null;
+    document.getElementById('editCollectionFormElement')?.reset();
+    showAdminPage('collections');
 }
 
 // ==========================================
@@ -508,7 +656,7 @@ async function loadAdminCollections() {
                     <td>${collection.title}</td>
                     <td>${collection.category}</td>
                     <td>${collection.period}</td>
-                    <td><span class="collection-category">${collection.status}</span></td>
+                    <td><span class="collection-category">${collection.status || 'active'}</span></td>
                     <td>
                         <button class="btn btn-sm" onclick="editCollection('${collection._id}')">Edit</button>
                         <button class="btn btn-danger btn-sm" onclick="deleteCollection('${collection._id}')">Delete</button>
@@ -666,8 +814,7 @@ async function deleteExhibition(id) {
     }
 }
 
-// Create or upload an exhibition. Accepts either a Plain Object
-// (will be sent as JSON) or a FormData instance (for file uploads).
+// Create or upload an exhibition. Accepts either a Plain Object (JSON) or FormData
 async function addExhibition(payload) {
     const options = { method: 'POST' };
 
@@ -683,6 +830,37 @@ async function addExhibition(payload) {
     const data = await response.json();
     if (!response.ok) {
         const err = new Error(data?.message || 'Failed to create exhibition');
+        err.response = data;
+        throw err;
+    }
+    return data;
+}
+
+// Create or upload a news article. Accepts either a Plain Object (JSON) or FormData
+async function addNews(payload) {
+    const options = { method: 'POST' };
+
+    if (payload instanceof FormData) {
+        options.body = payload;
+    } else if (payload && typeof payload === 'object') {
+        options.body = JSON.stringify(payload);
+    } else {
+        throw new Error('Invalid payload for addNews');
+    }
+
+    const response = await apiFetch('/api/admin/news', options);
+    let data;
+    try {
+        data = await response.json();
+    } catch (e) {
+        const text = await response.text();
+        const err = new Error('Server returned non-JSON response');
+        err.response = { status: response.status, text };
+        throw err;
+    }
+
+    if (!response.ok) {
+        const err = new Error(data?.message || 'Failed to create news');
         err.response = data;
         throw err;
     }
@@ -752,34 +930,64 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Add CSS animations
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
+// ==========================================
+// Visitor Info Page Functions
+// ==========================================
+
+// Initialize FAQ functionality
+function initializeFAQ() {
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        
+        question.addEventListener('click', () => {
+            // Close all other FAQ items
+            faqItems.forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            
+            // Toggle current item
+            item.classList.toggle('active');
+        });
+    });
+}
+
+// Smooth scroll for anchor links
+function initializeSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href !== '#' && href.length > 1) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        });
+    });
+}
+
+// Initialize visitor info page features
+function initializeVisitorInfoPage() {
+    initializeFAQ();
+    initializeSmoothScroll();
+}
+
+// Add to the existing DOMContentLoaded event listener
+window.addEventListener('DOMContentLoaded', () => {
+    const path = window.location.pathname;
+    
+    // Visitor Info page
+    if (path === '/visitor-info') {
+        initializeVisitorInfoPage();
     }
     
-    @keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-    }
-    
-    .btn-sm {
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
-    }
-`;
-document.head.appendChild(style);
+    // ... (rest of the existing page initialization code)
+});
